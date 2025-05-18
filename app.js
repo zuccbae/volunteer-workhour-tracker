@@ -19,8 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const hours = parseInt(document.getElementById('hours').value) || 0;
     const minutes = parseInt(document.getElementById('minutes').value) || 0;
     const totalHours = (hours + minutes / 60).toFixed(2);
+    const timestamp = new Date().toISOString();
 
     const entry = {
+      Timestamp: timestamp,
       Name: name,
       Date: date,
       Hours: totalHours
@@ -34,9 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
       },
     })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to submit to cloud');
+      return res.json();
+    })
     .then(data => {
-      alert('Entry submitted to cloud!');
+      if (data.created === 1) {
+        alert('Entry submitted to cloud!');
+      } else {
+        alert('Cloud submission failed. Entry saved locally only.');
+      }
     })
     .catch(err => {
       console.error('Cloud submission error:', err);
@@ -49,8 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshView();
     form.reset();
   });
-
-  // === Weekly view + CSV logic ===
 
   function refreshView() {
     grouped = groupEntriesByWeek(entries);
