@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Volunteer Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Volunteer Workhour Tracker</h1>
+  </header>
+
+  <main>
+    <div id="currentWeekDisplay" class="week-display"></div>
+
+    <form id="logForm">
+      <label>Name:
+        <input type="text" id="name" required>
+      </label><br>
+
+      <label>Date:
+        <input type="date" id="date" required>
+      </label><br>
+
+      <label>Hours:
+        <input type="number" id="hours" min="0" step="1" required>
+      </label>
+
+      <label>Minutes:
+        <input type="number" id="minutes" min="0" max="59" step="1" required>
+      </label>
+
+      <button type="submit">Add Entry</button>
+    </form>
+
+    <section>
+      <h2>Entries</h2>
+
+      <div class="download-bar">
+        <label for="weekSelect">Download CSV for Week:</label>
+        <select id="weekSelect">
+          <option value="">Select a week</option>
+        </select>
+        <button id="downloadCSV">Download Selected Week</button>
+      </div>
+
+      <!-- ✅ This is the missing piece: -->
+      <div id="weeklyEntriesContainer"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
