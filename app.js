@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('logForm');
-  const downloadBtn = document.getElementById('downloadCSV');
   const weekSelect = document.getElementById('weekSelect');
+  const downloadBtn = document.getElementById('downloadCSV');
   const weeklyContainer = document.getElementById('weeklyEntriesContainer');
   const weekDisplay = document.getElementById('currentWeekDisplay');
 
@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   displayCurrentWeekLabel();
   refreshView();
 
-  // === 📨 Submit to Google Sheets + Save Locally ===
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -21,33 +20,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const minutes = parseInt(document.getElementById('minutes').value) || 0;
     const totalHours = (hours + minutes / 60).toFixed(2);
 
-    const entry = { name, date, totalHours };
+    const entry = {
+      Name: name,
+      Date: date,
+      Hours: totalHours
+    };
 
-    // Send to Google Sheets
-    fetch('https://script.google.com/macros/s/AKfycbz83Zo3O9gPizIJm5D2juXiXG2VkqkKmP1IsyDeyN6wViYKtp7uyfbv_WFkPojmFvMR/exec', {
+    // Send to SheetDB
+    fetch('https://sheetdb.io/api/v1/c32du5n38t9gc', {
       method: 'POST',
-      body: JSON.stringify(entry),
+      body: JSON.stringify({ data: entry }),
       headers: {
         'Content-Type': 'application/json',
       },
     })
     .then(res => res.json())
     .then(data => {
-      alert('Entry submitted successfully to cloud!');
+      alert('Entry submitted to cloud!');
     })
     .catch(err => {
-      console.error('Submission error:', err);
+      console.error('Cloud submission error:', err);
       alert('Cloud error – entry saved locally instead.');
     });
 
-    // Also save locally for immediate display
-    entries.push(entry);
+    // Save locally for download + display
+    entries.push({ name, date, totalHours });
     localStorage.setItem('volunteerEntries', JSON.stringify(entries));
     refreshView();
     form.reset();
   });
 
-  // === 📥 Download CSV for selected week ===
+  // === Weekly view + CSV logic ===
+
+  function refreshView() {
+    grouped = groupEntriesByWeek(entries);
+    renderGroupedEntries(grouped);
+    populateWeekDropdown(grouped);
+  }
+
   downloadBtn.addEventListener('click', () => {
     const selectedWeek = weekSelect.value;
     if (!selectedWeek) {
@@ -78,22 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(link);
   });
 
-  // === 🔧 Helpers ===
-
-  function refreshView() {
-    grouped = groupEntriesByWeek(entries);
-    renderGroupedEntries(grouped);
-    populateWeekDropdown(grouped);
-  }
-
   function getWeekNumber(dateString) {
     const date = new Date(dateString);
     const dayNum = (date.getDay() + 6) % 7;
     date.setDate(date.getDate() - dayNum + 3);
     const firstThursday = new Date(date.getFullYear(), 0, 4);
-    const weekNum = Math.floor(
-      (date - firstThursday) / (7 * 24 * 60 * 60 * 1000)
-    ) + 1;
+    const weekNum = Math.floor((date - firstThursday) / (7 * 24 * 60 * 60 * 1000)) + 1;
     return `${date.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
   }
 
@@ -139,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const monday = new Date(today);
     monday.setDate(monday.getDate() - ((today.getDay() + 6) % 7));
-
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
 
