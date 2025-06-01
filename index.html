@@ -59,7 +59,7 @@
       </label><br>
 
       <label>Number of Days Spent:
-        <input type="number" id="daysSpent" step="0.25" min="0" required>
+        <input type="text" id="daysSpent" pattern="^\d+(\.\d{1,2})?$" inputmode="decimal" required>
       </label><br>
 
       <label>Task Type:
