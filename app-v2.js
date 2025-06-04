@@ -91,12 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getWeekNumber(date = new Date()) {
-    const temp = new Date(date);
-    const dayNum = (temp.getDay() + 6) % 7;
-    temp.setDate(temp.getDate() - dayNum + 3);
-    const firstThursday = new Date(temp.getFullYear(), 0, 4);
-    const weekNum = Math.floor((temp - firstThursday) / (7 * 24 * 60 * 60 * 1000)) + 1;
-    return `${temp.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+    // Retained for naming compatibility
+    return '';
   }
 
   function groupEntriesByWeek(entries) {
@@ -104,10 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
     entries.forEach(entry => {
       const month = entry.Month || "January";
       const year = entry.Year || new Date().getFullYear();
-      const dateObj = new Date(`${month} 1, ${year}`);
-      const week = getWeekNumber(dateObj);
-      if (!grouped[week]) grouped[week] = [];
-      grouped[week].push(entry);
+      const key = `${year}-${month}`;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(entry);
     });
     return grouped;
   }
