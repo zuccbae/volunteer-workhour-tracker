@@ -58,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
   downloadBtn.addEventListener('click', () => {
     const selectedWeek = weekSelect.value;
     if (!selectedWeek) {
-      alert("Please select a week to download.");
+      alert("Please select a month to download.");
       return;
     }
 
     const weekEntries = grouped[selectedWeek];
     if (!weekEntries?.length) {
-      alert("No entries for selected week.");
+      alert("No entries for selected month.");
       return;
     }
 
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function populateWeekDropdown(grouped) {
-    weekSelect.innerHTML = `<option value="">Select a week</option>`;
+    weekSelect.innerHTML = `<option value="">Select a month</option>`;
     Object.keys(grouped).forEach(week => {
       const option = document.createElement('option');
       option.value = week;
