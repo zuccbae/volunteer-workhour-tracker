@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let entries = JSON.parse(localStorage.getItem('volunteerEntries')) || [];
   let grouped = {};
 
-  displayCurrentWeekLabel();
   refreshView();
 
   form.addEventListener('submit', (e) => {
